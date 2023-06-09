@@ -102,7 +102,7 @@ module Tapioca
               store_data.accessors.each do |accessor, name|
                 field = store_data.fields.fetch(accessor)
                 type = type_for(field.type_sym)
-                type = as_nilable_type(type) if field.null
+                type = type.nilable if field.null
                 name ||= field.name # support < 1.5.0
 
                 store_accessors_module = model.create_module("StoreAccessors")
@@ -128,29 +128,29 @@ module Tapioca
 
         TYPES = T.let(
           {
-            boolean: "T::Boolean",
-            integer: "Integer",
-            string: "String",
-            float: "Float",
-            date: "Date",
-            time: "Time",
-            datetime: "DateTime",
-            decimal: "BigDecimal",
-            any: "T.untyped",
+            boolean: RBI::Type.boolean,
+            integer: RBI::Type.simple("::Integer"),
+            string: RBI::Type.simple("::String"),
+            float: RBI::Type.simple("::Float"),
+            date: RBI::Type.simple("::Date"),
+            time: RBI::Type.simple("::Time"),
+            datetime: RBI::Type.simple("::DateTime"),
+            decimal: RBI::Type.simple("::BigDecimal"),
+            any: RBI::Type.untyped,
           }.freeze,
-          T::Hash[Symbol, String],
+          T::Hash[Symbol, RBI::Type],
         )
 
-        sig { params(attr_type: Symbol).returns(String) }
+        sig { params(attr_type: Symbol).returns(RBI::Type) }
         def type_for(attr_type)
-          TYPES.fetch(attr_type, "T.untyped")
+          TYPES.fetch(attr_type, RBI::Type.untyped)
         end
 
         sig do
           params(
             klass: RBI::Scope,
             name: String,
-            type: String,
+            type: RBI::Type,
           )
             .void
         end
@@ -161,13 +161,13 @@ module Tapioca
             return_type: type,
           )
           klass.create_method(name, return_type: type)
-          klass.create_method("#{name}?", return_type: "T::Boolean")
+          klass.create_method("#{name}?", return_type: RBI::Type.boolean)
           klass.create_method("#{name}_was", return_type: type)
-          klass.create_method("#{name}_changed?", return_type: "T::Boolean")
+          klass.create_method("#{name}_changed?", return_type: RBI::Type.boolean)
           klass.create_method("#{name}_before_last_save", return_type: type)
-          klass.create_method("saved_change_to_#{name}?", return_type: "T::Boolean")
-          klass.create_method("#{name}_change", return_type: "T.nilable([#{type}, #{type}])")
-          klass.create_method("saved_change_to_#{name}", return_type: "T.nilable([#{type}, #{type}])")
+          klass.create_method("saved_change_to_#{name}?", return_type: RBI::Type.boolean)
+          klass.create_method("#{name}_change", return_type: RBI::Type.tuple(type, type).nilable)
+          klass.create_method("saved_change_to_#{name}", return_type: RBI::Type.tuple(type, type).nilable)
         end
       end
     end

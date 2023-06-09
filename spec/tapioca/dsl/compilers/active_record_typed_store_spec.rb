@@ -82,58 +82,58 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def reviewer; end
 
-                    sig { params(reviewer: T.nilable(String)).returns(T.nilable(String)) }
+                    sig { params(reviewer: T.nilable(::String)).returns(T.nilable(::String)) }
                     def reviewer=(reviewer); end
 
                     sig { returns(T::Boolean) }
                     def reviewer?; end
 
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def reviewer_before_last_save; end
 
-                    sig { returns(T.nilable([T.nilable(String), T.nilable(String)])) }
+                    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
                     def reviewer_change; end
 
                     sig { returns(T::Boolean) }
                     def reviewer_changed?; end
 
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def reviewer_was; end
 
-                    sig { returns(T.nilable([T.nilable(String), T.nilable(String)])) }
+                    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
                     def saved_change_to_reviewer; end
 
                     sig { returns(T::Boolean) }
                     def saved_change_to_reviewer?; end
 
-                    sig { returns(T.nilable([T.nilable(String), T.nilable(String)])) }
+                    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
                     def saved_change_to_title; end
 
                     sig { returns(T::Boolean) }
                     def saved_change_to_title?; end
 
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def title; end
 
-                    sig { params(title: T.nilable(String)).returns(T.nilable(String)) }
+                    sig { params(title: T.nilable(::String)).returns(T.nilable(::String)) }
                     def title=(title); end
 
                     sig { returns(T::Boolean) }
                     def title?; end
 
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def title_before_last_save; end
 
-                    sig { returns(T.nilable([T.nilable(String), T.nilable(String)])) }
+                    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
                     def title_change; end
 
                     sig { returns(T::Boolean) }
                     def title_changed?; end
 
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def title_was; end
                   end
                 end
@@ -211,58 +211,58 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(Date)) }
+                    sig { returns(T.nilable(::Date)) }
                     def review_date; end
 
-                    sig { params(review_date: T.nilable(Date)).returns(T.nilable(Date)) }
+                    sig { params(review_date: T.nilable(::Date)).returns(T.nilable(::Date)) }
                     def review_date=(review_date); end
 
                     sig { returns(T::Boolean) }
                     def review_date?; end
 
-                    sig { returns(T.nilable(Date)) }
+                    sig { returns(T.nilable(::Date)) }
                     def review_date_before_last_save; end
 
-                    sig { returns(T.nilable([T.nilable(Date), T.nilable(Date)])) }
+                    sig { returns(T.nilable([T.nilable(::Date), T.nilable(::Date)])) }
                     def review_date_change; end
 
                     sig { returns(T::Boolean) }
                     def review_date_changed?; end
 
-                    sig { returns(T.nilable(Date)) }
+                    sig { returns(T.nilable(::Date)) }
                     def review_date_was; end
 
-                    sig { returns(T.nilable([T.nilable(Date), T.nilable(Date)])) }
+                    sig { returns(T.nilable([T.nilable(::Date), T.nilable(::Date)])) }
                     def saved_change_to_review_date; end
 
                     sig { returns(T::Boolean) }
                     def saved_change_to_review_date?; end
 
-                    sig { returns(T.nilable([T.nilable(Date), T.nilable(Date)])) }
+                    sig { returns(T.nilable([T.nilable(::Date), T.nilable(::Date)])) }
                     def saved_change_to_title_date; end
 
                     sig { returns(T::Boolean) }
                     def saved_change_to_title_date?; end
 
-                    sig { returns(T.nilable(Date)) }
+                    sig { returns(T.nilable(::Date)) }
                     def title_date; end
 
-                    sig { params(title_date: T.nilable(Date)).returns(T.nilable(Date)) }
+                    sig { params(title_date: T.nilable(::Date)).returns(T.nilable(::Date)) }
                     def title_date=(title_date); end
 
                     sig { returns(T::Boolean) }
                     def title_date?; end
 
-                    sig { returns(T.nilable(Date)) }
+                    sig { returns(T.nilable(::Date)) }
                     def title_date_before_last_save; end
 
-                    sig { returns(T.nilable([T.nilable(Date), T.nilable(Date)])) }
+                    sig { returns(T.nilable([T.nilable(::Date), T.nilable(::Date)])) }
                     def title_date_change; end
 
                     sig { returns(T::Boolean) }
                     def title_date_changed?; end
 
-                    sig { returns(T.nilable(Date)) }
+                    sig { returns(T.nilable(::Date)) }
                     def title_date_was; end
                   end
                 end
@@ -287,10 +287,10 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(DateTime)) }
+                    sig { returns(T.nilable(::DateTime)) }
                     def review_date; end
 
-                    sig { params(review_date: T.nilable(DateTime)).returns(T.nilable(DateTime)) }
+                    sig { params(review_date: T.nilable(::DateTime)).returns(T.nilable(::DateTime)) }
                     def review_date=(review_date); end
               RBI
 
@@ -313,10 +313,10 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(Time)) }
+                    sig { returns(T.nilable(::Time)) }
                     def review_time; end
 
-                    sig { params(review_time: T.nilable(Time)).returns(T.nilable(Time)) }
+                    sig { params(review_time: T.nilable(::Time)).returns(T.nilable(::Time)) }
                     def review_time=(review_time); end
               RBI
 
@@ -339,10 +339,10 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(BigDecimal)) }
+                    sig { returns(T.nilable(::BigDecimal)) }
                     def rate; end
 
-                    sig { params(rate: T.nilable(BigDecimal)).returns(T.nilable(BigDecimal)) }
+                    sig { params(rate: T.nilable(::BigDecimal)).returns(T.nilable(::BigDecimal)) }
                     def rate=(rate); end
               RBI
 
@@ -391,10 +391,10 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(Integer)) }
+                    sig { returns(T.nilable(::Integer)) }
                     def rate; end
 
-                    sig { params(rate: T.nilable(Integer)).returns(T.nilable(Integer)) }
+                    sig { params(rate: T.nilable(::Integer)).returns(T.nilable(::Integer)) }
                     def rate=(rate); end
               RBI
 
@@ -417,10 +417,10 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(Float)) }
+                    sig { returns(T.nilable(::Float)) }
                     def rate; end
 
-                    sig { params(rate: T.nilable(Float)).returns(T.nilable(Float)) }
+                    sig { params(rate: T.nilable(::Float)).returns(T.nilable(::Float)) }
                     def rate=(rate); end
               RBI
 
@@ -443,10 +443,10 @@ module Tapioca
                   include StoreAccessors
 
                   module StoreAccessors
-                    sig { returns(T.nilable(String)) }
+                    sig { returns(T.nilable(::String)) }
                     def metadata_rate_metadata; end
 
-                    sig { params(metadata_rate_metadata: T.nilable(String)).returns(T.nilable(String)) }
+                    sig { params(metadata_rate_metadata: T.nilable(::String)).returns(T.nilable(::String)) }
                     def metadata_rate_metadata=(metadata_rate_metadata); end
               RBI
 
