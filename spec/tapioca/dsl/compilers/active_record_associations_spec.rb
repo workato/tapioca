@@ -227,7 +227,7 @@ module Tapioca
 
                         # This method is created by ActiveRecord on the `Employee` class because it declared `has_many :pictures`.
                         # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
-                        sig { returns(ActiveRecord::Associations::CollectionProxy) }
+                        sig { returns(::ActiveRecord::Associations::CollectionProxy) }
                         def pictures; end
 
                         sig { params(value: T::Enumerable[T.untyped]).void }
@@ -929,7 +929,7 @@ module Tapioca
 
                         # This method is created by ActiveRecord on the `Employee` class because it declared `has_many :pictures`.
                         # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
-                        sig { returns(ActiveRecord::Associations::CollectionProxy[T.untyped]) }
+                        sig { returns(::ActiveRecord::Associations::CollectionProxy[T.untyped]) }
                         def pictures; end
 
                         sig { params(value: T::Enumerable[T.untyped]).void }
