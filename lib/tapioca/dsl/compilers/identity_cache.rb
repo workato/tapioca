@@ -65,8 +65,13 @@ module Tapioca
         extend T::Sig
 
         COLLECTION_TYPE = T.let(
-          ->(type) { "T::Array[::#{type}]" },
-          T.proc.params(type: T.any(Module, String)).returns(String),
+          ->(type) {
+            RBI::Type.generic(
+              "T::Array",
+              RBI::Type.simple(Module === type ? Tapioca::Runtime::Reflection.qualified_name_of(type) : type),
+            )
+          },
+          T.proc.params(type: T.any(Module, String)).returns(RBI::Type),
         )
 
         ConstantType = type_member { { fixed: T.class_of(::ActiveRecord::Base) } }
@@ -117,17 +122,17 @@ module Tapioca
           params(
             field: T.untyped,
             returns_collection: T::Boolean,
-          ).returns(String)
+          ).returns(RBI::Type)
         end
         def type_for_field(field, returns_collection:)
           cache_type = field.reflection.compute_class(field.reflection.class_name)
           if returns_collection
             COLLECTION_TYPE.call(cache_type)
           else
-            as_nilable_type(T.must(qualified_name_of(cache_type)))
+            RBI::Type.simple(T.must(qualified_name_of(cache_type))).nilable
           end
         rescue ArgumentError
-          "T.untyped"
+          RBI::Type.untyped
         end
 
         sig do
@@ -143,9 +148,12 @@ module Tapioca
           klass.create_method(name, return_type: type)
 
           if field.respond_to?(:cached_ids_name)
-            klass.create_method(field.cached_ids_name, return_type: "T::Array[T.untyped]")
+            klass.create_method(
+              field.cached_ids_name,
+              return_type: RBI::Type.generic("T::Array", RBI::Type.untyped),
+            )
           elsif field.respond_to?(:cached_id_name)
-            klass.create_method(field.cached_id_name, return_type: "T.untyped")
+            klass.create_method(field.cached_id_name, return_type: RBI::Type.untyped)
           end
         end
 
@@ -175,12 +183,12 @@ module Tapioca
           fields_name = field.key_fields.join("_and_")
           name = "fetch_by_#{fields_name}"
           parameters = field.key_fields.map do |arg|
-            create_param(arg.to_s, type: "T.untyped")
+            create_param(arg.to_s, type: RBI::Type.untyped)
           end
-          parameters << create_kw_opt_param("includes", default: "nil", type: "T.untyped")
+          parameters << create_kw_opt_param("includes", default: "nil", type: RBI::Type.untyped)
 
           if field.unique
-            type = T.must(qualified_name_of(constant))
+            type = RBI::Type.simple(T.must(qualified_name_of(constant)))
 
             klass.create_method(
               "#{name}!",
@@ -193,7 +201,7 @@ module Tapioca
               name,
               class_method: true,
               parameters: parameters,
-              return_type: as_nilable_type(type),
+              return_type: type.nilable,
             )
           else
             klass.create_method(
@@ -208,8 +216,8 @@ module Tapioca
             "fetch_multi_by_#{fields_name}",
             class_method: true,
             parameters: [
-              create_param("index_values", type: "T::Enumerable[T.untyped]"),
-              create_kw_opt_param("includes", default: "nil", type: "T.untyped"),
+              create_param("index_values", type: RBI::Type.generic("T::Enumerable", RBI::Type.untyped)),
+              create_kw_opt_param("includes", default: "nil", type: RBI::Type.untyped),
             ],
             return_type: COLLECTION_TYPE.call(constant),
           )
@@ -223,12 +231,12 @@ module Tapioca
         end
         def create_aliased_fetch_by_methods(field, klass)
           type, _ = Helpers::ActiveRecordColumnTypeHelper.new(constant).type_for(field.alias_name.to_s)
-          multi_type = type.delete_prefix("T.nilable(").delete_suffix(")").delete_prefix("::")
+          multi_type = type.non_nilable
           length = field.key_fields.length
           suffix = field.send(:fetch_method_suffix)
 
           parameters = field.key_fields.map do |arg|
-            create_param(arg.to_s, type: "T.untyped")
+            create_param(arg.to_s, type: RBI::Type.untyped)
           end
 
           klass.create_method(
@@ -242,8 +250,8 @@ module Tapioca
             klass.create_method(
               "fetch_multi_#{suffix}",
               class_method: true,
-              parameters: [create_param("keys", type: "T::Enumerable[T.untyped]")],
-              return_type: COLLECTION_TYPE.call(multi_type),
+              parameters: [create_param("keys", type: RBI::Type.generic("T::Enumerable", RBI::Type.untyped))],
+              return_type: COLLECTION_TYPE.call(multi_type.to_rbi),
             )
           end
         end
