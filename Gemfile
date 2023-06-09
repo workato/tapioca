@@ -54,3 +54,4 @@ group :test do
 end
 
 gem "kramdown", "~> 2.4"
+gem "rbi", github: "Shopify/rbi", branch: "uk-type-builder"

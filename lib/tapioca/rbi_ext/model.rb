@@ -66,9 +66,9 @@ module RBI
         name: String,
         type: String,
         variance: Symbol,
-        fixed: T.nilable(String),
-        upper: T.nilable(String),
-        lower: T.nilable(String),
+        fixed: T.nilable(RBI::Type),
+        upper: T.nilable(RBI::Type),
+        lower: T.nilable(RBI::Type),
       ).void
     end
     def create_type_variable(name, type:, variance: :invariant, fixed: nil, upper: nil, lower: nil)
@@ -80,14 +80,20 @@ module RBI
       params(
         name: String,
         parameters: T::Array[TypedParam],
-        return_type: String,
+        return_type: RBI::Type,
         class_method: T::Boolean,
         visibility: RBI::Visibility,
         comments: T::Array[RBI::Comment],
       ).void
     end
-    def create_method(name, parameters: [], return_type: "T.untyped", class_method: false, visibility: RBI::Public.new,
-      comments: [])
+    def create_method(
+      name,
+      parameters: [],
+      return_type: RBI::Type.untyped,
+      class_method: false,
+      visibility: RBI::Public.new,
+      comments: []
+    )
       return unless Tapioca::RBIHelper.valid_method_name?(name)
 
       sig = RBI::Sig.new(return_type: return_type)
@@ -125,6 +131,6 @@ module RBI
 
   class TypedParam < T::Struct
     const :param, RBI::Param
-    const :type, String
+    const :type, RBI::Type
   end
 end
