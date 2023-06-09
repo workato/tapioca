@@ -93,17 +93,17 @@ module Tapioca
                 name = state.name
                 name = "#{namespace}_#{name}" if namespace
 
-                model.create_constant("STATE_#{name.upcase}", value: "T.let(T.unsafe(nil), Symbol)")
-                model.create_method("#{name}?", return_type: "T::Boolean")
+                model.create_constant("STATE_#{name.upcase}", value: "T.let(T.unsafe(nil), ::Symbol)")
+                model.create_method("#{name}?", return_type: RBI::Type.boolean)
               end
 
               # Create all of the methods for each event
-              parameters = [create_rest_param("opts", type: "T.untyped")]
+              parameters = [create_rest_param("opts", type: RBI::Type.untyped)]
               state_machine.events.each do |event|
                 model.create_method(event.name.to_s, parameters: parameters)
                 model.create_method("#{event.name}!", parameters: parameters)
                 model.create_method("#{event.name}_without_validation!", parameters: parameters)
-                model.create_method("may_#{event.name}?", return_type: "T::Boolean")
+                model.create_method("may_#{event.name}?", return_type: RBI::Type.boolean)
 
                 # For events, if there's a namespace the default methods are created in addition to
                 # namespaced ones.
@@ -113,7 +113,7 @@ module Tapioca
 
                 model.create_method(name.to_s, parameters: parameters)
                 model.create_method("#{name}!", parameters: parameters)
-                model.create_method("may_#{name}?", return_type: "T::Boolean")
+                model.create_method("may_#{name}?", return_type: RBI::Type.boolean)
 
                 # There's no namespaced method created for `_without_validation`, so skip
                 # defining a method for:
@@ -126,10 +126,13 @@ module Tapioca
             model.create_method(
               "aasm",
               parameters: [
-                create_rest_param("args", type: "T.untyped"),
-                create_block_param("block", type: "T.nilable(T.proc.bind(PrivateAASMMachine).void)"),
+                create_rest_param("args", type: RBI::Type.untyped),
+                create_block_param(
+                  "block",
+                  type: RBI::Type.proc.bind(RBI::Type.simple("PrivateAASMMachine")).void.nilable,
+                ),
               ],
-              return_type: "PrivateAASMMachine",
+              return_type: RBI::Type.simple("PrivateAASMMachine"),
               class_method: true,
             )
 
@@ -140,9 +143,12 @@ module Tapioca
               machine.create_method(
                 "event",
                 parameters: [
-                  create_param("name", type: "T.untyped"),
-                  create_opt_param("options", default: "nil", type: "T.untyped"),
-                  create_block_param("block", type: "T.proc.bind(PrivateAASMEvent).void"),
+                  create_param("name", type: RBI::Type.untyped),
+                  create_opt_param("options", default: "nil", type: RBI::Type.untyped),
+                  create_block_param(
+                    "block",
+                    type: RBI::Type.proc.bind("PrivateAASMEvent").void,
+                  ),
                 ],
               )
 
@@ -152,8 +158,11 @@ module Tapioca
                 machine.create_method(
                   method,
                   parameters: [
-                    create_opt_param("symbol", type: "T.nilable(Symbol)", default: "nil"),
-                    create_block_param("block", type: "T.nilable(T.proc.bind(#{constant_name}).void)"),
+                    create_opt_param("symbol", type: RBI::Type.simple("::Symbol").nilable, default: "nil"),
+                    create_block_param(
+                      "block",
+                      type: RBI::Type.proc.bind(constant_name).void.nilable,
+                    ),
                   ],
                 )
               end
@@ -166,8 +175,11 @@ module Tapioca
                   event.create_method(
                     method,
                     parameters: [
-                      create_opt_param("symbol", type: "T.nilable(Symbol)", default: "nil"),
-                      create_block_param("block", type: "T.nilable(T.proc.bind(#{constant_name}).void)"),
+                      create_opt_param("symbol", type: RBI::Type.simple("::Symbol").nilable, default: "nil"),
+                      create_block_param(
+                        "block",
+                        type: RBI::Type.proc.bind(constant_name).void.nilable,
+                      ),
                     ],
                   )
                 end
