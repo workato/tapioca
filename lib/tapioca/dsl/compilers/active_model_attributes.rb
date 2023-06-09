@@ -66,7 +66,7 @@ module Tapioca
 
         HANDLED_METHOD_TARGETS = T.let(["attribute", "attribute="], T::Array[String])
 
-        sig { returns(T::Array[[::String, ::String]]) }
+        sig { returns(T::Array[[::String, ::RBI::Type]]) }
         def attribute_methods_for_constant
           patterns = if constant.respond_to?(:attribute_method_patterns)
             # https://github.com/rails/rails/pull/44367
@@ -99,32 +99,31 @@ module Tapioca
           HANDLED_METHOD_TARGETS.include?(target.to_s)
         end
 
-        sig { params(attribute_type_value: ::ActiveModel::Type::Value).returns(::String) }
+        sig { params(attribute_type_value: ::ActiveModel::Type::Value).returns(RBI::Type) }
         def type_for(attribute_type_value)
           type = case attribute_type_value
           when ActiveModel::Type::Boolean
-            "T::Boolean"
+            RBI::Type.boolean
           when ActiveModel::Type::Date
-            "::Date"
+            RBI::Type.simple("::Date")
           when ActiveModel::Type::DateTime, ActiveModel::Type::Time
-            "::Time"
+            RBI::Type.simple("::Time")
           when ActiveModel::Type::Decimal
-            "::BigDecimal"
+            RBI::Type.simple("::BigDecimal")
           when ActiveModel::Type::Float
-            "::Float"
+            RBI::Type.simple("::Float")
           when ActiveModel::Type::Integer
-            "::Integer"
+            RBI::Type.simple("::Integer")
           when ActiveModel::Type::String
-            "::String"
+            RBI::Type.simple("::String")
           else
-            # we don't want untyped to be wrapped by T.nilable, so just return early
-            return "T.untyped"
+            RBI::Type.untyped
           end
 
-          as_nilable_type(type)
+          type.nilable
         end
 
-        sig { params(klass: RBI::Scope, method: String, type: String).void }
+        sig { params(klass: RBI::Scope, method: String, type: RBI::Type).void }
         def generate_method(klass, method, type)
           if method.end_with?("=")
             parameter = create_param("value", type: type)
