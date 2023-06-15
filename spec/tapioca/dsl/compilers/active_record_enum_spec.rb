@@ -45,7 +45,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -83,7 +83,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), String]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::String]) }
                     def statuses; end
                   end
 
@@ -120,7 +120,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), T.any(Integer, TrueClass, String)]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), T.any(::Integer, ::TrueClass, ::String)]) }
                     def statuses; end
                   end
 
@@ -164,10 +164,10 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def comments_statuses; end
 
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -217,10 +217,10 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), T.any(Integer, FalseClass, String, Array)]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), T.any(::Integer, ::FalseClass, ::String, ::Array)]) }
                     def comments_statuses; end
 
-                    sig { returns(T::Hash[T.any(String, Symbol), T.any(Integer, TrueClass, String)]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), T.any(::Integer, ::TrueClass, ::String)]) }
                     def statuses; end
                   end
 
@@ -287,7 +287,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -324,7 +324,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -365,7 +365,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -388,7 +388,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -431,7 +431,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
@@ -454,7 +454,7 @@ module Tapioca
                   include EnumMethodsModule
 
                   class << self
-                    sig { returns(T::Hash[T.any(String, Symbol), Integer]) }
+                    sig { returns(T::Hash[T.any(::String, ::Symbol), ::Integer]) }
                     def statuses; end
                   end
 
