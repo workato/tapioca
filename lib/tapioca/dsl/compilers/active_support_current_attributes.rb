@@ -112,15 +112,15 @@ module Tapioca
         sig { params(klass: RBI::Scope, method: String, class_method: T::Boolean).void }
         def generate_method(klass, method, class_method:)
           if method.end_with?("=")
-            parameter = create_param("value", type: "T.untyped")
+            parameter = create_param("value", type: RBI::Type.untyped)
             klass.create_method(
               method,
               class_method: class_method,
               parameters: [parameter],
-              return_type: "T.untyped",
+              return_type: RBI::Type.untyped,
             )
           else
-            klass.create_method(method, class_method: class_method, return_type: "T.untyped")
+            klass.create_method(method, class_method: class_method, return_type: RBI::Type.untyped)
           end
         end
       end
