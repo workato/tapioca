@@ -260,13 +260,13 @@ module Tapioca
                   include ::ActionDispatch::Routing::UrlFor
                   include ::ActionDispatch::Routing::PolymorphicRoutes
 
-                  sig { params(args: T.untyped).returns(String) }
+                  sig { params(args: T.untyped).returns(::String) }
                   def edit_index_path(*args); end
 
-                  sig { params(args: T.untyped).returns(String) }
+                  sig { params(args: T.untyped).returns(::String) }
                   def index_path(*args); end
 
-                  sig { params(args: T.untyped).returns(String) }
+                  sig { params(args: T.untyped).returns(::String) }
                   def new_index_path(*args); end
                 end
               RBI
@@ -290,13 +290,13 @@ module Tapioca
                   include ::ActionDispatch::Routing::UrlFor
                   include ::ActionDispatch::Routing::PolymorphicRoutes
 
-                  sig { params(args: T.untyped).returns(String) }
+                  sig { params(args: T.untyped).returns(::String) }
                   def edit_index_url(*args); end
 
-                  sig { params(args: T.untyped).returns(String) }
+                  sig { params(args: T.untyped).returns(::String) }
                   def index_url(*args); end
 
-                  sig { params(args: T.untyped).returns(String) }
+                  sig { params(args: T.untyped).returns(::String) }
                   def new_index_url(*args); end
                 end
               RBI
