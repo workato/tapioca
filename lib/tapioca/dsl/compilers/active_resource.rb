@@ -87,23 +87,23 @@ module Tapioca
 
         TYPES = T.let(
           {
-            boolean: "T::Boolean",
-            integer: "Integer",
-            string: "String",
-            float: "Float",
-            date: "Date",
-            time: "Time",
-            datetime: "DateTime",
-            decimal: "BigDecimal",
-            binary: "String",
-            text: "String",
+            boolean: RBI::Type.boolean,
+            integer: RBI::Type.simple("::Integer"),
+            string: RBI::Type.simple("::String"),
+            float: RBI::Type.simple("::Float"),
+            date: RBI::Type.simple("::Date"),
+            time: RBI::Type.simple("::Time"),
+            datetime: RBI::Type.simple("::DateTime"),
+            decimal: RBI::Type.simple("::BigDecimal"),
+            binary: RBI::Type.simple("::String"),
+            text: RBI::Type.simple("::String"),
           }.freeze,
-          T::Hash[Symbol, String],
+          T::Hash[Symbol, RBI::Type],
         )
 
-        sig { params(attr_type: Symbol).returns(String) }
+        sig { params(attr_type: Symbol).returns(RBI::Type) }
         def type_for(attr_type)
-          TYPES.fetch(attr_type, "T.untyped")
+          TYPES.fetch(attr_type, RBI::Type.untyped)
         end
 
         sig { params(klass: RBI::Scope, attribute: String, type: String).void }
@@ -111,7 +111,7 @@ module Tapioca
           return_type = type_for(type.to_sym)
 
           klass.create_method(attribute, return_type: return_type)
-          klass.create_method("#{attribute}?", return_type: "T::Boolean")
+          klass.create_method("#{attribute}?", return_type: RBI::Type.boolean)
           klass.create_method(
             "#{attribute}=",
             parameters: [
