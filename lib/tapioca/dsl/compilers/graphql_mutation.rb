@@ -59,11 +59,14 @@ module Tapioca
           params = compile_method_parameters_to_rbi(method_def).map do |param|
             name = param.param.name
             argument = arguments_by_name.fetch(name, nil)
-            create_typed_param(param.param, argument ? Helpers::GraphqlTypeHelper.type_for(argument.type) : "T.untyped")
+            create_typed_param(
+              param.param,
+              argument ? Helpers::GraphqlTypeHelper.type_for(argument.type) : RBI::Type.untyped,
+            )
           end
 
           root.create_path(constant) do |mutation|
-            mutation.create_method("resolve", parameters: params, return_type: "T.untyped")
+            mutation.create_method("resolve", parameters: params, return_type: RBI::Type.untyped)
           end
         end
 

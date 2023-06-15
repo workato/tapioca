@@ -9,46 +9,41 @@ module Tapioca
 
         extend T::Sig
 
-        sig { params(type: GraphQL::Schema::Wrapper).returns(String) }
+        sig { params(type: GraphQL::Schema::Wrapper).returns(RBI::Type) }
         def type_for(type)
           unwrapped_type = type.unwrap
 
           parsed_type = case unwrapped_type
           when GraphQL::Types::Boolean.singleton_class
-            "T::Boolean"
+            RBI::Type.boolean
           when GraphQL::Types::Float.singleton_class
-            type_for_constant(Float)
+            RBI::Type.simple("::Float")
           when GraphQL::Types::ID.singleton_class, GraphQL::Types::String.singleton_class
-            type_for_constant(String)
+            RBI::Type.simple("::String")
           when GraphQL::Types::Int.singleton_class
-            type_for_constant(Integer)
+            RBI::Type.simple("::Integer")
           when GraphQL::Types::ISO8601Date.singleton_class
-            type_for_constant(Date)
+            RBI::Type.simple("::Date")
           when GraphQL::Types::ISO8601DateTime.singleton_class
-            type_for_constant(Time)
+            RBI::Type.simple("::Time")
           when GraphQL::Types::JSON.singleton_class
-            "T::Hash[::String, T.untyped]"
+            RBI::Type.generic("T::Hash", RBI::Type.simple("::String"), RBI::Type.untyped)
           when GraphQL::Schema::Enum.singleton_class
             enum_values = T.cast(unwrapped_type.enum_values, T::Array[GraphQL::Schema::EnumValue])
-            value_types = enum_values.map { |v| type_for_constant(v.value.class) }.uniq
-
-            if value_types.size == 1
-              T.must(value_types.first)
-            else
-              "T.any(#{value_types.join(", ")})"
-            end
+            value_types = enum_values.map { |v| type_for_constant(v.value.class) }
+            RBI::Type.any(value_types)
           when GraphQL::Schema::InputObject.singleton_class
             type_for_constant(unwrapped_type)
           else
-            "T.untyped"
+            RBI::Type.untyped
           end
 
           if type.list?
-            parsed_type = "T::Array[#{parsed_type}]"
+            parsed_type = RBI::Type.generic("T::Array", parsed_type)
           end
 
           unless type.non_null?
-            parsed_type = RBIHelper.as_nilable_type(parsed_type)
+            parsed_type = parsed_type.nilable
           end
 
           parsed_type
@@ -56,9 +51,14 @@ module Tapioca
 
         private
 
-        sig { params(constant: Module).returns(String) }
+        sig { params(constant: Module).returns(RBI::Type) }
         def type_for_constant(constant)
-          Runtime::Reflection.qualified_name_of(constant) || "T.untyped"
+          name = Runtime::Reflection.qualified_name_of(constant)
+          if name
+            RBI::Type.simple(name)
+          else
+            RBI::Type.untyped
+          end
         end
       end
     end
