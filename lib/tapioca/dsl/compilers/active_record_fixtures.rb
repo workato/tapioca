@@ -106,8 +106,11 @@ module Tapioca
         def create_fixture_method(mod, name)
           mod.create_method(
             name,
-            parameters: [create_rest_param("fixture_names", type: "T.any(String, Symbol)")],
-            return_type: "T.untyped",
+            parameters: [create_rest_param(
+              "fixture_names",
+              type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+            )],
+            return_type: RBI::Type.untyped,
           )
         end
       end
