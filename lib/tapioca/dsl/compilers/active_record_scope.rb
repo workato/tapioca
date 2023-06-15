@@ -64,7 +64,7 @@ module Tapioca
               generate_scope_method(
                 relation_methods_module,
                 scope_method.to_s,
-                relations_enabled ? RelationClassName : "T.untyped",
+                relations_enabled ? RBI::Type.simple(RelationClassName) : RBI::Type.untyped,
               )
 
               next unless relations_enabled
@@ -72,7 +72,7 @@ module Tapioca
               generate_scope_method(
                 assoc_relation_methods_mod,
                 scope_method.to_s,
-                AssociationRelationClassName,
+                RBI::Type.simple(AssociationRelationClassName),
               )
             end
 
@@ -112,15 +112,15 @@ module Tapioca
           params(
             mod: RBI::Scope,
             scope_method: String,
-            return_type: String,
+            return_type: RBI::Type,
           ).void
         end
         def generate_scope_method(mod, scope_method, return_type)
           mod.create_method(
             scope_method,
             parameters: [
-              create_rest_param("args", type: "T.untyped"),
-              create_block_param("blk", type: "T.untyped"),
+              create_rest_param("args", type: RBI::Type.untyped),
+              create_block_param("blk", type: RBI::Type.untyped),
             ],
             return_type: return_type,
           )
