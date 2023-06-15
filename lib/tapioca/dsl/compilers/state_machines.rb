@@ -171,22 +171,18 @@ module Tapioca
 
         private
 
-        sig { params(machine: ::StateMachines::Machine).returns(String) }
+        sig { params(machine: ::StateMachines::Machine).returns(RBI::Type) }
         def state_type_for(machine)
-          value_types = machine.states.map { |state| state.value.class.name }.uniq
+          value_types = machine.states.map { |state| RBI::Type.simple(T.must(qualified_name_of(state.value.class))) }
 
-          if value_types.size == 1
-            value_types.first
-          else
-            "T.any(#{value_types.join(", ")})"
-          end
+          RBI::Type.any(value_types)
         end
 
         sig { params(instance_module: RBI::Module).void }
         def define_activerecord_methods(instance_module)
           instance_module.create_method(
             "changed_for_autosave?",
-            return_type: "T::Boolean",
+            return_type: RBI::Type.boolean,
           )
         end
 
@@ -195,7 +191,7 @@ module Tapioca
           machine.states.each do |state|
             instance_module.create_method(
               "#{state.qualified_name}?",
-              return_type: "T::Boolean",
+              return_type: RBI::Type.boolean,
             )
           end
         end
@@ -205,22 +201,22 @@ module Tapioca
           machine.events.each do |event|
             instance_module.create_method(
               "can_#{event.qualified_name}?",
-              return_type: "T::Boolean",
+              return_type: RBI::Type.boolean,
             )
             instance_module.create_method(
               "#{event.qualified_name}_transition",
-              parameters: [create_rest_param("args", type: "T.untyped")],
-              return_type: "T.nilable(::StateMachines::Transition)",
+              parameters: [create_rest_param("args", type: RBI::Type.untyped)],
+              return_type: RBI::Type.simple("::StateMachines::Transition").nilable,
             )
             instance_module.create_method(
               event.qualified_name.to_s,
-              parameters: [create_rest_param("args", type: "T.untyped")],
-              return_type: "T::Boolean",
+              parameters: [create_rest_param("args", type: RBI::Type.untyped)],
+              return_type: RBI::Type.boolean,
             )
             instance_module.create_method(
               "#{event.qualified_name}!",
-              parameters: [create_rest_param("args", type: "T.untyped")],
-              return_type: "T::Boolean",
+              parameters: [create_rest_param("args", type: RBI::Type.untyped)],
+              return_type: RBI::Type.boolean,
             )
           end
         end
@@ -229,7 +225,7 @@ module Tapioca
           params(
             instance_module: RBI::Module,
             machine: ::StateMachines::Machine,
-            state_type: String,
+            state_type: RBI::Type,
           ).void
         end
         def define_state_accessor(instance_module, machine, state_type)
@@ -249,8 +245,11 @@ module Tapioca
         def define_state_predicate(instance_module, machine)
           instance_module.create_method(
             "#{machine.name}?",
-            parameters: [create_param("state", type: "T.any(String, Symbol)")],
-            return_type: "T::Boolean",
+            parameters: [create_param(
+              "state",
+              type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+            )],
+            return_type: RBI::Type.boolean,
           )
         end
 
@@ -263,40 +262,46 @@ module Tapioca
 
           instance_module.create_method(
             events_attribute,
-            parameters: [create_rest_param("args", type: "T.untyped")],
-            return_type: "T::Array[T.any(String, Symbol)]",
+            parameters: [create_rest_param("args", type: RBI::Type.untyped)],
+            return_type: RBI::Type.generic(
+              "T::Array",
+              RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+            ),
           )
           instance_module.create_method(
             transitions_attribute,
-            parameters: [create_rest_param("args", type: "T.untyped")],
-            return_type: "T::Array[::StateMachines::Transition]",
+            parameters: [create_rest_param("args", type: RBI::Type.untyped)],
+            return_type: RBI::Type.generic("T::Array", RBI::Type.simple("::StateMachines::Transition")),
           )
           instance_module.create_method(
             "fire_#{event_attribute}",
             parameters: [
-              create_param("event", type: "T.any(String, Symbol)"),
-              create_rest_param("args", type: "T.untyped"),
+              create_param("event", type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol"))),
+              create_rest_param("args", type: RBI::Type.untyped),
             ],
-            return_type: "T::Boolean",
+            return_type: RBI::Type.boolean,
           )
           if machine.action
             instance_module.create_method(
               event_attribute,
-              return_type: "T.nilable(Symbol)",
+              return_type: RBI::Type.simple("::Symbol").nilable,
             )
             instance_module.create_method(
               "#{event_attribute}=",
-              parameters: [create_param("value", type: "T.any(String, Symbol)")],
-              return_type: "T.any(String, Symbol)",
+              parameters: [create_param(
+                "value",
+                type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+              )],
+              return_type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
             )
             instance_module.create_method(
               event_transition_attribute,
-              return_type: "T.nilable(::StateMachines::Transition)",
+              return_type: RBI::Type.simple("::StateMachines::Transition").nilable,
             )
             instance_module.create_method(
               "#{event_transition_attribute}=",
-              parameters: [create_param("value", type: "::StateMachines::Transition")],
-              return_type: "::StateMachines::Transition",
+              parameters: [create_param("value", type: RBI::Type.simple("::StateMachines::Transition"))],
+              return_type: RBI::Type.simple("::StateMachines::Transition"),
             )
           end
         end
@@ -307,8 +312,8 @@ module Tapioca
 
           instance_module.create_method(
             paths_attribute,
-            parameters: [create_rest_param("args", type: "T.untyped")],
-            return_type: "T::Array[::StateMachines::Transition]",
+            parameters: [create_rest_param("args", type: RBI::Type.untyped)],
+            return_type: RBI::Type.generic("T::Array", RBI::Type.simple("::StateMachines::Transition")),
           )
         end
 
@@ -325,21 +330,27 @@ module Tapioca
 
           class_module.create_method(
             "human_#{name_attribute}",
-            parameters: [create_param("state", type: "T.any(String, Symbol)")],
-            return_type: "String",
+            parameters: [create_param(
+              "state",
+              type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+            )],
+            return_type: RBI::Type.simple("::String"),
           )
           class_module.create_method(
             "human_#{event_name_attribute}",
-            parameters: [create_param("event", type: "T.any(String, Symbol)")],
-            return_type: "String",
+            parameters: [create_param(
+              "event",
+              type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+            )],
+            return_type: RBI::Type.simple("::String"),
           )
           instance_module.create_method(
             name_attribute,
-            return_type: "T.any(String, Symbol)",
+            return_type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
           )
           instance_module.create_method(
             "human_#{name_attribute}",
-            return_type: "String",
+            return_type: RBI::Type.simple("::String"),
           )
         end
 
@@ -353,8 +364,11 @@ module Tapioca
             .each do |method|
               class_module.create_method(
                 method.to_s,
-                parameters: [create_rest_param("states", type: "T.any(String, Symbol)")],
-                return_type: "T.untyped",
+                parameters: [create_rest_param(
+                  "states",
+                  type: RBI::Type.any(RBI::Type.simple("::String"), RBI::Type.simple("::Symbol")),
+                )],
+                return_type: RBI::Type.untyped,
               )
             end
         end
