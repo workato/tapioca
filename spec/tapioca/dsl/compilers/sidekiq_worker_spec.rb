@@ -60,13 +60,13 @@ module Tapioca
 
                 class NotifierWorker
                   class << self
-                    sig { params(customer_id: T.untyped).returns(String) }
+                    sig { params(customer_id: T.untyped).returns(::String) }
                     def perform_async(customer_id); end
 
-                    sig { params(interval: T.any(DateTime, Time), customer_id: T.untyped).returns(String) }
+                    sig { params(interval: T.any(::DateTime, ::Time), customer_id: T.untyped).returns(::String) }
                     def perform_at(interval, customer_id); end
 
-                    sig { params(interval: Numeric, customer_id: T.untyped).returns(String) }
+                    sig { params(interval: ::Numeric, customer_id: T.untyped).returns(::String) }
                     def perform_in(interval, customer_id); end
                   end
                 end
@@ -92,13 +92,13 @@ module Tapioca
 
                 class NotifierWorker
                   class << self
-                    sig { params(customer_id: ::Integer).returns(String) }
+                    sig { params(customer_id: ::Integer).returns(::String) }
                     def perform_async(customer_id); end
 
-                    sig { params(interval: T.any(DateTime, Time), customer_id: ::Integer).returns(String) }
+                    sig { params(interval: T.any(::DateTime, ::Time), customer_id: ::Integer).returns(::String) }
                     def perform_at(interval, customer_id); end
 
-                    sig { params(interval: Numeric, customer_id: ::Integer).returns(String) }
+                    sig { params(interval: ::Numeric, customer_id: ::Integer).returns(::String) }
                     def perform_in(interval, customer_id); end
                   end
                 end
@@ -125,13 +125,13 @@ module Tapioca
 
                 class SecondaryWorker
                   class << self
-                    sig { params(customer_id: T.untyped).returns(String) }
+                    sig { params(customer_id: T.untyped).returns(::String) }
                     def perform_async(customer_id); end
 
-                    sig { params(interval: T.any(DateTime, Time), customer_id: T.untyped).returns(String) }
+                    sig { params(interval: T.any(::DateTime, ::Time), customer_id: T.untyped).returns(::String) }
                     def perform_at(interval, customer_id); end
 
-                    sig { params(interval: Numeric, customer_id: T.untyped).returns(String) }
+                    sig { params(interval: ::Numeric, customer_id: T.untyped).returns(::String) }
                     def perform_in(interval, customer_id); end
                   end
                 end
@@ -163,10 +163,10 @@ module Tapioca
 
                 class SecondaryWorker
                   class << self
-                    sig { params(customer_id: T.untyped, other_id: T.untyped).returns(String) }
+                    sig { params(customer_id: T.untyped, other_id: T.untyped).returns(::String) }
                     def perform_async(customer_id, other_id); end
 
-                    sig { params(interval: Numeric, customer_id: T.untyped, other_id: T.untyped).returns(String) }
+                    sig { params(interval: ::Numeric, customer_id: T.untyped, other_id: T.untyped).returns(::String) }
                     def perform_in(interval, customer_id, other_id); end
                   end
                 end

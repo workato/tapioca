@@ -58,11 +58,11 @@ module Tapioca
             # accept a datetime, time, or numeric but we're typing them differently so they
             # semantically make sense.
             at_params = [
-              create_param("interval", type: "T.any(DateTime, Time)"),
+              create_param("interval", type: RBI::Type.any(RBI::Type.simple("::DateTime"), RBI::Type.simple("::Time"))),
               *async_params,
             ]
             in_params = [
-              create_param("interval", type: "Numeric"),
+              create_param("interval", type: RBI::Type.simple("::Numeric")),
               *async_params,
             ]
 
@@ -92,7 +92,12 @@ module Tapioca
         end
         def generate_perform_method(worker, method_name, parameters)
           if constant.method(method_name.to_sym).owner == Sidekiq::Worker::ClassMethods
-            worker.create_method(method_name, parameters: parameters, return_type: "String", class_method: true)
+            worker.create_method(
+              method_name,
+              parameters: parameters,
+              return_type: RBI::Type.simple("::String"),
+              class_method: true,
+            )
           end
         end
       end
