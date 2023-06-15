@@ -54,7 +54,10 @@ module Tapioca
             job.create_method(
               "perform_later",
               parameters: parameters,
-              return_type: "T.any(#{name_of(constant)}, FalseClass)",
+              return_type: RBI::Type.any(
+                RBI::Type.simple(T.must(qualified_name_of(constant))),
+                RBI::Type.simple("::FalseClass"),
+              ),
               class_method: true,
             )
 
