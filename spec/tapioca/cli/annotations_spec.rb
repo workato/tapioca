@@ -354,6 +354,47 @@ module Tapioca
 
         repo.destroy
       end
+
+      it "filters RBI file based on gem version" do
+        foo = mock_gem("foo", "0.3.4") do
+          write("lib/foo.rb", <<~BAR)
+            class Foo; end
+          BAR
+        end
+
+        @project.require_mock_gem(foo)
+        @project.bundle_install
+
+        repo = create_repo({
+          foo: <<~RBI,
+            # typed: false
+
+            # @version > 0.3.5
+            class AnnotationForFoo; end
+
+            class Foo; end
+          RBI
+        })
+
+        result = @project.tapioca("annotations --sources #{repo.path}")
+
+        assert_stdout_includes(result, "create  sorbet/rbi/annotations/foo.rbi")
+
+        assert_project_annotation_equal("sorbet/rbi/annotations/foo.rbi", <<~RBI)
+          # typed: false
+
+          # DO NOT EDIT MANUALLY
+          # This file was pulled from a central RBI files repository.
+          # Please run `bin/tapioca annotations` to update it.
+
+          class Foo; end
+        RBI
+
+        assert_success_status(result)
+
+        repo.destroy
+        remove_gem_from_gemfile("foo")
+      end
     end
 
     private
@@ -375,6 +416,15 @@ module Tapioca
     sig { params(path: String, content: String).void }
     def assert_project_annotation_equal(path, content)
       assert_equal(content, @project.read(path))
+    end
+
+    sig { params(gem_name: String).void }
+    def remove_gem_from_gemfile(gem_name)
+      gemfile_lines = @project.read("Gemfile").split("\n")
+      gemfile_lines.delete_if do |line|
+        line.include?("gem '#{gem_name}'")
+      end
+      @project.gemfile(gemfile_lines.join("\n"), append: false)
     end
   end
 end
