@@ -10,6 +10,7 @@ gem "minitest-reporters"
 gem "debug", require: false
 gem "pry"
 gem "pry-byebug"
+gem "rbi", github: "Shopify/rbi", branch: "emily-alex/rbi-versioning"
 gem "rubocop-shopify", require: false
 gem "rubocop-sorbet", ">= 0.4.1"
 gem "rubocop-rspec", require: false

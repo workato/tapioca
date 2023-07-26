@@ -1,4 +1,15 @@
 GIT
+  remote: https://github.com/Shopify/rbi.git
+  revision: f3d809b62f3e01624fb2903820bd87796ff5f7fd
+  branch: emily-alex/rbi-versioning
+  specs:
+    rbi (0.0.17)
+      ast
+      parser (>= 3.0.0)
+      sorbet-runtime (>= 0.5.9204)
+      unparser (>= 0.5.6)
+
+GIT
   remote: https://github.com/csfrancis/cityhash.git
   revision: 3cfc7d01f333c01811d5e834f1495eaa29f87c36
   ref: 3cfc7d01f333c01811d5e834f1495eaa29f87c36
@@ -294,11 +305,6 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
-    rbi (0.0.17)
-      ast
-      parser (>= 3.0.0)
-      sorbet-runtime (>= 0.5.9204)
-      unparser (>= 0.5.6)
     redis (5.0.6)
       redis-client (>= 0.9.0)
     redis-client (0.14.1)
@@ -425,6 +431,7 @@ DEPENDENCIES
   pry-byebug
   rails
   rake
+  rbi!
   rubocop-rspec
   rubocop-shopify
   rubocop-sorbet (>= 0.4.1)
