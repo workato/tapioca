@@ -7,6 +7,9 @@ module Tapioca
   class AnnotationsTest < SpecWithProject
     describe "cli::annotations" do
       before(:all) do
+        @project.gemfile(<<~GEMFILE, append: true)
+          gem "rbi", github: "Shopify/rbi", branch: "emily-alex/rbi-versioning"
+        GEMFILE
         @project.bundle_install
       end
 
