@@ -38,18 +38,20 @@ module Tapioca
       def execute
         @indexes = fetch_indexes
         project_gems = list_gemfile_gems
-        remove_expired_annotations(project_gems)
+        remove_expired_annotations(project_gems.keys)
         fetch_annotations(project_gems)
       end
 
-      sig { returns(T::Array[String]) }
+      sig { returns(T::Hash[String, ::Gem::Version]) }
       def list_gemfile_gems
         say("Listing gems from Gemfile.lock... ", [:blue, :bold])
         gemfile = Bundler.read_file("Gemfile.lock")
         parser = Bundler::LockfileParser.new(gemfile)
-        gem_names = parser.specs.map(&:name)
+        gem_names_and_versions = parser.specs.each_with_object({}) do |spec, obj|
+          obj[spec.name] = spec.version
+        end
         say("Done", :green)
-        gem_names
+        gem_names_and_versions
       end
 
       sig { params(project_gems: T::Array[String]).void }
@@ -105,10 +107,11 @@ module Tapioca
         index
       end
 
-      sig { params(gem_names: T::Array[String]).returns(T::Array[String]) }
-      def fetch_annotations(gem_names)
+      sig { params(gem_names_and_versions: T::Hash[String, ::Gem::Version]).returns(T::Array[String]) }
+      def fetch_annotations(gem_names_and_versions)
         say("Fetching gem annotations from central repository... ", [:blue, :bold])
         fetchable_gems = T.let(Hash.new { |h, k| h[k] = [] }, T::Hash[String, T::Array[String]])
+        gem_names = gem_names_and_versions.keys
 
         gem_names.each_with_object(fetchable_gems) do |gem_name, hash|
           @indexes.each do |uri, index|
@@ -123,13 +126,15 @@ module Tapioca
         end
 
         say("\n")
-        fetched_gems = fetchable_gems.select { |gem_name, repo_uris| fetch_annotation(repo_uris, gem_name) }
+        fetched_gems = fetchable_gems.select do |gem_name, repo_uris|
+          fetch_annotation(repo_uris, gem_name, T.must(gem_names_and_versions[gem_name]))
+        end
         say("\nDone", :green)
         fetched_gems.keys.sort
       end
 
-      sig { params(repo_uris: T::Array[String], gem_name: String).void }
-      def fetch_annotation(repo_uris, gem_name)
+      sig { params(repo_uris: T::Array[String], gem_name: String, gem_version: ::Gem::Version).void }
+      def fetch_annotation(repo_uris, gem_name, gem_version)
         contents = repo_uris.map do |repo_uri|
           fetch_file(repo_uri, "#{CENTRAL_REPO_ANNOTATIONS_DIR}/#{gem_name}.rbi")
         end
@@ -137,6 +142,7 @@ module Tapioca
         content = merge_files(gem_name, contents.compact)
         return unless content
 
+        content = filter_versions(gem_version, content)
         content = apply_typed_override(gem_name, content)
         content = add_header(gem_name, content)
 
@@ -244,6 +250,19 @@ module Tapioca
         say_error("\n\n  Can't import RBI file for `#{gem_name}` as it contains errors:", :yellow)
         say_error("    Error: #{e.message} (#{e.location})")
         nil
+      end
+
+      sig do
+        params(gem_version: ::Gem::Version, content: String).returns(String)
+      end
+      def filter_versions(gem_version, content)
+        puts ::Gem::Specification.find_by_name("rbi").gem_dir
+        rewriter = RBI::Rewriters::FilterVersions.new(gem_version)
+
+        rbi = RBI::Parser.parse_string(content)
+        rewriter.visit(rbi)
+
+        rbi.string
       end
 
       sig { returns(T::Hash[String, T.nilable(String)]) }
