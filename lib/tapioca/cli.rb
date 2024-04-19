@@ -134,6 +134,11 @@ module Tapioca
       type: :boolean,
       desc: "Halt upon a load error while loading the Rails application",
       default: true
+    option :skip_constant,
+      type: :array,
+      banner: "constant [constant ...]",
+      desc: "Do not generate RBI definitions for the given application constant(s)",
+      default: []
     def dsl(*constant_or_paths)
       set_environment(options)
 
@@ -149,6 +154,7 @@ module Tapioca
         file_header: options[:file_header],
         tapioca_path: TAPIOCA_DIR,
         should_verify: options[:verify],
+        skip_constant: options[:skip_constant],
         quiet: options[:quiet],
         verbose: options[:verbose],
         number_of_workers: options[:workers],
